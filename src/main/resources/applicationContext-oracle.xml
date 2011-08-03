@@ -1,0 +1,35 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <context:component-scan base-package="com.blogspot.ostas.dbpojo" />
+
+	<bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	  <property name="location" value="classpath:database.properties"/>
+	</bean>
+
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" depends-on="placeholderConfig">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.user}" />
+        <property name="password" value="${jdbc.pass}" />
+  </bean>
+ 
+   <bean id="pojoGenerator" class="com.blogspot.ostas.dbpojo.PojoGenerator">
+       <property name="dataSource" ref="dataSource"/>
+       <property name="sqlTypesConversionHelper" ref="oracleSqlHelper"/>
+       <property name="nameConversionHelper" ref="nameConversionHelper"/>
+   </bean>
+
+    <bean id="oracleSqlHelper" class="com.blogspot.ostas.dbpojo.utils.SqlToJavaTypesMap" depends-on="placeholderConfig" lazy-init="true">
+        <property name="conversionFileDef" value="${jdbc.sqlToJavaType}"/>
+    </bean>
+
+    <bean id="nameConversionHelper" class="com.blogspot.ostas.dbpojo.utils.NameConversionHelperImpl">
+        <property name="keywordsFile"  value="${keywordsFile}"/>
+    </bean>
+</beans>

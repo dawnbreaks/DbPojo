@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<mapping for="mysql5">
+	<type db="CHAR" to="String"/>
+	<type db="VARCHAR" to="String"/>
+	<type db="LONGVARCHAR" to="String"/>
+	<type db="NUMERIC" to="BigDecimal"  import="java.math.BigDecimal"/>
+	<type db="DECIMAL" to="BigDecimal" import="java.math.BigDecimal"/>
+	<type db="BIT" to="boolean"/>
+	<type db="TINYINT" to="byte"/>
+	<type db="SMALLINT" to="short"/>
+    <type db="SMALLINT UNSIGNED" to="short"/>
+	<type db="INTEGER" to="int"/>
+	<type db="INT" to="int"/>
+    <type db="BIGINT" to="long"/>
+	<type db="REAL" to="float"/>
+	<type db="FLOAT" to="double"/>
+	<type db="DOUBLE" to="double"/>
+	<type db="BINARY" to="byte[]"/>
+	<type db="VARBINARY" to="byte[]"/>
+	<type db="LONGVARBINARY" to="byte[]"/>
+    <type db="LONGBLOB" to="byte[]"/>
+    <type db="BLOB" to="byte[]"/>
+	<type db="DATE" to="Date" import="java.sql.Date"/>
+	<type db="TIME" to="java.sql.Date" import="java.sql.Date"/>
+	<type db="TIMESTAMP" to="Timestamp" import="java.sql.Timestamp"/>
+    <type db="DATETIME" to="Timestamp" import="java.sql.Timestamp"/>
+</mapping>

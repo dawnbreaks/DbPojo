@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<mapping for="oracle11">
+	<type db="varchar" to="String"/>
+	<type db="varchar2" to="String"/>
+	<type db="NVARCHAR2" to="String"/>
+	<type db="CHAR" to="String"/>
+	
+	<type db="NUMBER" to="double"/>
+	<type db="RAW" to="byte[]"/>
+	<type db="LONG RAW" to="LONG RAW"/>
+	<type db="INTEGER" to="int"/>
+	<type db="LONG" to="int"/>
+	<type db="DATE" to="Date" import="java.sql.Date"/>
+	<type db="TIMESTAMP" to="Timestamp" import="java.sql.Timestamp"/>
+	<type db="TIMESTAMP WITH TIME ZONE" to="Timestamp" import="java.sql.Timestamp"/>
+	<type db="ROWID" to="String"/>
+	<type db="BLOB" to="byte[]"/>
+	<type db="CLOB" to="byte[]"/>
+	<type db="NCLOB" to="byte[]"/>
+</mapping>
