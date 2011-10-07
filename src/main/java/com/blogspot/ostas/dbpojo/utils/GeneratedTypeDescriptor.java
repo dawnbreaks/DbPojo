@@ -28,9 +28,8 @@ public class GeneratedTypeDescriptor {
         GeneratedTypeDescriptor that = (GeneratedTypeDescriptor) o;
 
         if (importString != null ? !importString.equals(that.importString) : that.importString != null) return false;
-        if (typeName != null ? !typeName.equals(that.typeName) : that.typeName != null) return false;
+        return !(typeName != null ? !typeName.equals(that.typeName) : that.typeName != null);
 
-        return true;
     }
 
     @Override

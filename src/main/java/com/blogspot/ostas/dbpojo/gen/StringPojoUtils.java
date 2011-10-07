@@ -11,8 +11,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 public class StringPojoUtils {
-    private VelocityEngine ve;
-    private VelocityContext ctx;
+    private final VelocityEngine ve;
     private Template t;
     public StringPojoUtils()
     {
@@ -29,14 +28,17 @@ public class StringPojoUtils {
     public String pojoAsStringFromTemplate(PojoPrototype pojoPrototype) {
         Writer writer = null;
         try {
-            ctx = new VelocityContext();
-            ctx.put("pojo",pojoPrototype);
+            VelocityContext ctx = new VelocityContext();
+            ctx.put("pojo", pojoPrototype);
             writer = new StringWriter();
             t.merge(ctx, writer);
             writer.close();
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return writer.toString();
+        if (writer != null) {
+            return writer.toString();
+        }
+        return null;
     }
 }

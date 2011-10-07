@@ -1,6 +1,5 @@
 package com.blogspot.ostas.dbpojo;
 
-import com.blogspot.ostas.dbpojo.PojoGenerator;
 import com.blogspot.ostas.dbpojo.gen.PojoWriter;
 import com.blogspot.ostas.dbpojo.model.PojoPrototype;
 import org.apache.log4j.Logger;
@@ -9,7 +8,7 @@ import java.util.List;
 
 public class PojoGeneratorMainApp
 {
-    private static Logger logger = Logger.getLogger(PojoGenerator.class);
+    private static final Logger logger = Logger.getLogger(PojoGenerator.class);
 
     public static void main(String[] args)
     {
@@ -25,7 +24,7 @@ public class PojoGeneratorMainApp
         pojoWriter.setPath("src/main/java/generated/");
         pojoWriter.setTemplateName("pojo.vm");
 
-        PojoPrototype prototype = new PojoPrototype();
+        PojoPrototype prototype;
         for(String table : inSchema)
         {
             prototype = pojoGenerator.readTableMetadata(table,schemaName);

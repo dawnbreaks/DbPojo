@@ -72,9 +72,8 @@ public class PojoFieldPrototype {
         if (!columnName.equals(that.columnName)) return false;
         if (!javaType.equals(that.javaType)) return false;
         if (!name.equals(that.name)) return false;
-        if (!sqlType.equals(that.sqlType)) return false;
+        return sqlType.equals(that.sqlType);
 
-        return true;
     }
 
     @Override

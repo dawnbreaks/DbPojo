@@ -27,7 +27,7 @@ public class SqlToJavaTypesMap implements SqlTypesConversionHelper {
     {
         typesMap = new HashMap<String, GeneratedTypeDescriptor>();
     }
-    private final void readXml()
+    private void readXml()
     {
  try {
     final File fXmlFile = new File(conversionFileDef);

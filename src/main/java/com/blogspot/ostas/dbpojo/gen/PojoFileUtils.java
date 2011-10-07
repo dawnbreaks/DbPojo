@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import java.io.*;
 
 public class PojoFileUtils {
-    private static Logger logger = Logger.getLogger(PojoFileUtils.class);
+    private static final Logger logger = Logger.getLogger(PojoFileUtils.class);
     private Jalopy jalopy = null;
     public PojoFileUtils(String path)
     {
@@ -22,7 +22,7 @@ public class PojoFileUtils {
         }
     }
     public void writeStringToFile(String string, String fileName, String path) {
-        BufferedWriter out = null;
+        BufferedWriter out;
         try {
             out = new BufferedWriter(new FileWriter(path+fileName));
             out.write(string);

@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext-oracle.xml"})
 public class OraclePojoTestCase {
-	static Logger logger = Logger.getLogger(OraclePojoTestCase.class);
+	private static final Logger logger = Logger.getLogger(OraclePojoTestCase.class);
     @Autowired
     private PojoGenerator pojoGenerator;
 
@@ -74,7 +74,7 @@ public class OraclePojoTestCase {
         javaObj.setPath("src/main/java/"+PojoWriter.packageToDirectoryStructure(packageForModel));
         javaObj.setTemplateName("pojo.vm");
 
-        PojoPrototype prototype = new PojoPrototype();
+        PojoPrototype prototype;
         for(String table : inSchema)
         {
             prototype = pojoGenerator.readTableMetadata(table,schemaName);

@@ -55,7 +55,7 @@ public class PojoGenerator
         } catch (SQLException e) {
             logger.error(e);
         }
-    };
+    }
 
     public final String metadataQuerySQL(String tableName)
     {
@@ -67,7 +67,7 @@ public class PojoGenerator
         final String sql = metadataQuerySQL(schema+"."+tableName);
         Statement statement = null;
         ResultSet rs = null;
-        ResultSetMetaData metaData = null;
+        ResultSetMetaData metaData;
         PojoPrototype pojoPrototype = new PojoPrototype();
         pojoPrototype.setTableName(tableName);
         pojoPrototype.setName(nameConversionHelper.tableNameToClassName(tableName));
@@ -138,7 +138,7 @@ public class PojoGenerator
             if(resultSet!=null)
             {
                 tables = new LinkedList<String>();
-                String tableName = null;
+                String tableName;
                 while (resultSet.next())
                 {
                     tableName = resultSet.getString(1);
@@ -151,7 +151,8 @@ public class PojoGenerator
             logger.error(e);
         }
         return tables;
-    };
+    }
+
     public List<String> getAllTablesInSchemaBySQL(String sql)
     {
         List<String> tables = null;
@@ -161,7 +162,7 @@ public class PojoGenerator
             if(resultSet!=null)
             {
                 tables = new LinkedList<String>();
-                String tableName = null;
+                String tableName;
                 while (resultSet.next())
                 {
                     tableName = resultSet.getString(1);
