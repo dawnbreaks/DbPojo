@@ -13,7 +13,7 @@ import java.util.Set;
 import static com.google.common.base.CaseFormat.*;
 
 public class NameConversionHelperImpl implements NameConversionHelper {
-    static Logger logger = Logger.getLogger(NameConversionHelperImpl.class);
+    private static final Logger logger = Logger.getLogger(NameConversionHelperImpl.class);
     private Set<String> keywords;
     private String keywordsFile;
 
@@ -43,12 +43,12 @@ public class NameConversionHelperImpl implements NameConversionHelper {
         preResult = StringUtils.remove(preResult, "#");
         preResult = LOWER_UNDERSCORE.to(LOWER_CAMEL,preResult);
         if(isKeyword(preResult)){
-            preResult = nornalizeField(preResult);
+            preResult = normalizeField(preResult);
         }
         return preResult;
     }
     @Override
-    public String nornalizeField(String nameCandidate){
+    public String normalizeField(String nameCandidate){
         return "changeMe___"+nameCandidate;
     }
 
@@ -56,7 +56,7 @@ public class NameConversionHelperImpl implements NameConversionHelper {
     private Set<String> loadKeyWords()
     {
         keywords = new HashSet<String>();
-        BufferedReader in = null;
+        BufferedReader in;
         try {
             in = new BufferedReader(new FileReader(keywordsFile));
             String keyword;
@@ -70,7 +70,6 @@ public class NameConversionHelperImpl implements NameConversionHelper {
         return keywords;
     }
     private boolean isKeyword(String fieldName){
-        if(keywords.contains(fieldName)) return true;
-        return false;
-    };
+        return keywords.contains(fieldName);
+    }
 }
