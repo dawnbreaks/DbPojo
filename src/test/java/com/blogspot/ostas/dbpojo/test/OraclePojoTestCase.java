@@ -62,17 +62,23 @@ public class OraclePojoTestCase {
         }
     }
     //mysql test
-    @Ignore @Test public void testPojoMYSQLPrototypes()
+    //@Ignore
+    @Test public void testPojoMYSQLPrototypes()
     {
         String schemaName = "bamboo";
         //String schemaName = "opencms";
         List<String> inSchema = pojoGenerator.getAllTablesInSchemaBySQL("SHOW TABLES FROM "+schemaName);
 
         String packageForModel = "com.blogspot.ostas.generated.model";
+        String packageForDao = "com.blogspot.ostas.generated.dao";
 
         PojoWriter javaObj = new PojoWriter();
         javaObj.setPath("src/main/java/"+PojoWriter.packageToDirectoryStructure(packageForModel));
         javaObj.setTemplateName("pojo.vm");
+
+        PojoWriter javaDao = new PojoWriter();
+        javaDao.setPath("src/main/java/"+PojoWriter.packageToDirectoryStructure(packageForDao));
+        javaDao.setTemplateName("jdbcDao.vm");
 
         PojoPrototype prototype;
         for(String table : inSchema)
@@ -83,6 +89,16 @@ public class OraclePojoTestCase {
 
             javaObj.setFileName(prototype.getName()+".java");
             javaObj.write(prototype);
+
+            //dao generation
+            prototype.setModelItem(prototype.getName());// not changed name yet
+            prototype.getImports().add(prototype.getJavaPackage()+"."+prototype.getName());
+
+            prototype.setName(prototype.getName()+"Dao");
+            prototype.setJavaPackage(packageForDao);
+
+            javaDao.setFileName(prototype.getName()+".java");
+            javaDao.write(prototype);
 
             logger.debug("Prototype : "+prototype);
         }

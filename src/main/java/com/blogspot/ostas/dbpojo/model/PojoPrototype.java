@@ -11,11 +11,20 @@ public class PojoPrototype {
     private String tableName;
     private List<PojoFieldPrototype> fields;
     private List<String> imports;
+    private String modelItem;
 
     public PojoPrototype()
     {
         fields = new LinkedList<PojoFieldPrototype>();
         imports = new LinkedList<String>();
+    }
+
+    public String getModelItem() {
+        return modelItem;
+    }
+
+    public void setModelItem(String modelItem) {
+        this.modelItem = modelItem;
     }
 
     public List<String> getImports() {
