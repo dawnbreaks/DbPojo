@@ -51,11 +51,11 @@ public class PojoWriter {
         String velocityTemplateGeneratedString = stringPojoUtils.pojoAsStringFromTemplate(pojoPrototype);
         if(fileName!=null)
         {
-            pojoFileUtils.writeStringToFile(velocityTemplateGeneratedString,fileName,path);
+            pojoFileUtils.writeStringToFile(velocityTemplateGeneratedString,fileName,path, performFormat);
         }
         else
         {
-            pojoFileUtils.writeStringToFile(velocityTemplateGeneratedString,pojoPrototype.getName(),path);
+            pojoFileUtils.writeStringToFile(velocityTemplateGeneratedString,pojoPrototype.getName(),path, performFormat);
         }
     }
 

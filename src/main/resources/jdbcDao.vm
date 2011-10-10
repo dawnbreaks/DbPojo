@@ -1,7 +1,8 @@
 package ${pojo.javaPackage};
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -12,14 +13,11 @@ import ${import};
 #end
 #end
 
+@Component
 public class $pojo.name
 {
-private JdbcTemplate jdbcTemplate;
-
-public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
-}
-
+@Autowired
+JdbcTemplate jdbcTemplate;
 public List<$pojo.modelItem> getData(){
     return jdbcTemplate.query("select * from ${pojo.tableName}", new ParameterizedRowMapper<$pojo.modelItem>() {
         @Override

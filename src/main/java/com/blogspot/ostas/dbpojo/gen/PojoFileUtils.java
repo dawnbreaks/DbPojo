@@ -21,7 +21,7 @@ public class PojoFileUtils {
             logger.error(e);
         }
     }
-    public void writeStringToFile(String string, String fileName, String path) {
+    public void writeStringToFile(String string, String fileName, String path, boolean performFormat) {
         BufferedWriter out;
         try {
             out = new BufferedWriter(new FileWriter(path+fileName));
@@ -30,7 +30,9 @@ public class PojoFileUtils {
         } catch (IOException e) {
             logger.error(e);
         }
-        formatCode(path+fileName);
+        if(performFormat){
+            formatCode(path+fileName);
+        }
     }
     public void formatCode(String file)
     {

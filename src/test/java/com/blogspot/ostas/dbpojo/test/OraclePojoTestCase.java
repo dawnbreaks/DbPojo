@@ -75,10 +75,12 @@ public class OraclePojoTestCase {
         PojoWriter javaObj = new PojoWriter();
         javaObj.setPath("src/main/java/"+PojoWriter.packageToDirectoryStructure(packageForModel));
         javaObj.setTemplateName("pojo.vm");
+        javaObj.setPerformFormat(true);
 
         PojoWriter javaDao = new PojoWriter();
         javaDao.setPath("src/main/java/"+PojoWriter.packageToDirectoryStructure(packageForDao));
         javaDao.setTemplateName("jdbcDao.vm");
+        javaDao.setPerformFormat(true);
 
         PojoPrototype prototype;
         for(String table : inSchema)
@@ -102,6 +104,20 @@ public class OraclePojoTestCase {
 
             logger.debug("Prototype : "+prototype);
         }
+    }
+    @Test public void testGeneratedApplicationConfig()
+    {
+        String packageForDao = "com.blogspot.ostas.generated.dao";
+        PojoWriter writer = new PojoWriter();
+        writer.setTemplateName("applicationContext-generated.xml.vm");
+        writer.setPath("src\\test\\resources\\");
+        writer.setFileName("applicationContext-generated.xml");
+        writer.setPerformFormat(false);
+
+        PojoPrototype prototypeAppContextForDaos = new PojoPrototype();
+        prototypeAppContextForDaos.setJavaPackage(packageForDao);
+
+        writer.write(prototypeAppContextForDaos);
     }
 }
  
