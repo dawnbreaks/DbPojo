@@ -83,11 +83,15 @@ public class PojoGenerator
                         pojoFieldPrototype = new PojoFieldPrototype();
 
                         pojoFieldPrototype.setColumnName(metaData.getColumnName(i));
-                        pojoFieldPrototype.setName(nameConversionHelper.columnNameToIdentifier(metaData.getColumnName(i)));
+//                        pojoFieldPrototype.setName(nameConversionHelper.columnNameToIdentifier(metaData.getColumnName(i)));
+                        pojoFieldPrototype.setName(metaData.getColumnName(i));//fix me!!
                         pojoFieldPrototype.setSqlType(metaData.getColumnTypeName(i));
                         pojoFieldPrototype.setJavaType(sqlTypesConversionHelper.sqlTypeToJavaType(metaData.getColumnTypeName(i)));
+                        if(metaData.isAutoIncrement(i)){
+                        	pojoFieldPrototype.setAnnotation("@PrimaryKey");
+                        }
                         imp = sqlTypesConversionHelper.importStringForSqlType(metaData.getColumnTypeName(i));
-                        if(imp!=null){
+                        if(imp!=null && !pojoPrototype.getImports().contains(imp)){
                             pojoPrototype.getImports().add(imp);
                         }
                         pojoPrototype.getFields().add(pojoFieldPrototype);

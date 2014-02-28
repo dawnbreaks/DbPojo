@@ -11,6 +11,7 @@ public class PojoFieldPrototype {
     private String javaType;
     private String getter;
     private String setter;
+    private String annotation;
 
     public String getName() {
         return name;
@@ -61,6 +62,14 @@ public class PojoFieldPrototype {
     public void setSetter(String setter) {
         this.setter = setter;
     }
+    
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
+
+	public String getAnnotation() {
+		return annotation;
+	}
 
     @Override
     public boolean equals(Object o) {
@@ -88,4 +97,6 @@ public class PojoFieldPrototype {
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
     }
+
+
 }
