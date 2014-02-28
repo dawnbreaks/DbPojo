@@ -8,7 +8,7 @@ A simple reverse engineering tool for generating pojo from database tables.
 Build
 ========
 
-To build the JAR file of NettyRPC, you need to install Maven (http://maven.apache.org), then type the following command:
+To build the JAR file of DbPojo, you need to install Maven (http://maven.apache.org), then type the following command:
 
     $ mvn package
 
