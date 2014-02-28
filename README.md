@@ -1,3 +1,26 @@
+DbPojo
+========
+
+A simple reverse engineering tool for generating pojo from database tables.
 
 
-Framework for code generation based on JDBC compatible relational database tables. 
+
+Build
+========
+
+To build the JAR file of NettyRPC, you need to install Maven (http://maven.apache.org), then type the following command:
+
+    $ mvn package
+
+To generate project files (.project, .classpath) for Eclipse, do
+
+    $ mvn eclipse:eclipse
+
+then import the folder from your Eclipse.
+
+copy dependencies
+
+    $ mvn dependency:copy-dependencies
+    
+    
+======== 
