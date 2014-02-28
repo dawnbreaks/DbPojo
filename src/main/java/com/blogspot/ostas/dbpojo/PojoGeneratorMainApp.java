@@ -3,6 +3,8 @@ package com.blogspot.ostas.dbpojo;
 import com.blogspot.ostas.dbpojo.gen.PojoWriter;
 import com.blogspot.ostas.dbpojo.model.PojoPrototype;
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.util.List;
 
@@ -12,14 +14,14 @@ public class PojoGeneratorMainApp
 
     public static void main(String[] args)
     {
-        PojoGenerator pojoGenerator = new PojoGenerator();
-        //String schemaName = "SYS";
-        //String schemaName = "SYSMAN";
-        String schemaName = "APEX_030200";
-        //String schemaName = "SYSTEM";
-
-        List<String> inSchema = pojoGenerator.getAllTablesInSchema(schemaName);
-
+    	
+    	ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-oracle.xml");
+        PojoGenerator pojoGenerator = (PojoGenerator) context.getBean("pojoGenerator");
+        String schemaName = "crmadmin";
+        String packageForModel = "com.blogspot.ostas.generated.model";
+        
+        List<String> inSchema = pojoGenerator.getAllTablesInSchemaBySQL("SHOW TABLES FROM "+schemaName);
+        
         PojoWriter pojoWriter = new PojoWriter();
         pojoWriter.setPath("src/main/java/generated/");
         pojoWriter.setTemplateName("pojo.vm");
@@ -29,6 +31,7 @@ public class PojoGeneratorMainApp
         {
             prototype = pojoGenerator.readTableMetadata(table,schemaName);
 
+            prototype.setJavaPackage(packageForModel);
             pojoWriter.setFileName(prototype.getName()+".java");
             pojoWriter.write(prototype);
 
