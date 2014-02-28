@@ -1,21 +1,21 @@
-package com.blogspot.ostas.dbpojo.model;
+package com.gihub.dbpojo.model;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class PojoPrototype {
+public class ClassInfo {
     private String name;
     private String javaPackage;
     private String tableName;
-    private List<PojoFieldPrototype> fields;
+    private List<FieldInfo> fields;
     private List<String> imports;
     private String modelItem;
 
-    public PojoPrototype()
+    public ClassInfo()
     {
-        fields = new LinkedList<PojoFieldPrototype>();
+        fields = new LinkedList<FieldInfo>();
         imports = new LinkedList<String>();
     }
 
@@ -59,11 +59,11 @@ public class PojoPrototype {
         this.tableName = tableName;
     }
 
-    public List<PojoFieldPrototype> getFields() {
+    public List<FieldInfo> getFields() {
         return fields;
     }
 
-    public void setFields(List<PojoFieldPrototype> fields) {
+    public void setFields(List<FieldInfo> fields) {
         this.fields = fields;
     }
 

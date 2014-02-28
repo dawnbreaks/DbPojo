@@ -1,4 +1,4 @@
-package com.blogspot.ostas.dbpojo.utils;
+package com.gihub.dbpojo.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,8 +12,8 @@ import java.util.Set;
 
 import static com.google.common.base.CaseFormat.*;
 
-public class NameConversionHelperImpl implements NameConversionHelper {
-    private static final Logger logger = Logger.getLogger(NameConversionHelperImpl.class);
+public class NameConversion {
+    private static final Logger logger = Logger.getLogger(NameConversion.class);
     private Set<String> keywords;
     private String keywordsFile;
 
@@ -25,7 +25,6 @@ public class NameConversionHelperImpl implements NameConversionHelper {
         this.keywordsFile = keywordsFile;
     }
 
-    @Override
     public String tableNameToClassName(String tableName){
         String preResult = tableName.toLowerCase();
         if(preResult.indexOf('$')!=-1){
@@ -33,7 +32,7 @@ public class NameConversionHelperImpl implements NameConversionHelper {
         }
         return LOWER_UNDERSCORE.to(UPPER_CAMEL,preResult);
     }
-    @Override
+   
     public String columnNameToIdentifier(String columnName)
     {
         String preResult = columnName.toLowerCase();
@@ -47,12 +46,13 @@ public class NameConversionHelperImpl implements NameConversionHelper {
         }
         return preResult;
     }
-    @Override
+
     public String normalizeField(String nameCandidate){
         return "changeMe___"+nameCandidate;
     }
 
-    @PostConstruct
+    @SuppressWarnings("unused")
+	@PostConstruct
     private Set<String> loadKeyWords()
     {
         keywords = new HashSet<String>();

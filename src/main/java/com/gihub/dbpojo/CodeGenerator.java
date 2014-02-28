@@ -1,34 +1,41 @@
-package com.blogspot.ostas.dbpojo;
+package com.gihub.dbpojo;
 
-import com.blogspot.ostas.dbpojo.model.PojoFieldPrototype;
-import com.blogspot.ostas.dbpojo.model.PojoPrototype;
-import com.blogspot.ostas.dbpojo.utils.NameConversionHelper;
-import com.blogspot.ostas.dbpojo.utils.SqlTypesConversionHelper;
-import org.apache.log4j.Logger;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.LinkedList;
-import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.gihub.dbpojo.model.ClassInfo;
+import com.gihub.dbpojo.model.FieldInfo;
+import com.gihub.dbpojo.util.NameConversion;
+import com.gihub.dbpojo.util.SqlToJavaType;
 
 //@Component
-public class PojoGenerator
+public class CodeGenerator
 {
-    private static Logger logger = Logger.getLogger(PojoGenerator.class);
+    private static Logger logger = Logger.getLogger(CodeGenerator.class);
     private Connection connection;
     //@Autowired
     private DataSource dataSource;
-    private SqlTypesConversionHelper sqlTypesConversionHelper;
-    private NameConversionHelper nameConversionHelper;
+    private SqlToJavaType sqlToJavaType;
+    private NameConversion nameConversion;
 
-    public void setNameConversionHelper(NameConversionHelper nameConversionHelper) {
-        this.nameConversionHelper = nameConversionHelper;
+    public void setNameConversion(NameConversion nameConversion) {
+        this.nameConversion = nameConversion;
     }
 
-    public void setSqlTypesConversionHelper(SqlTypesConversionHelper sqlTypesConversionHelper) {
-        this.sqlTypesConversionHelper = sqlTypesConversionHelper;
+    public void setSqlToJavaType(SqlToJavaType sqlToJavaType) {
+        this.sqlToJavaType = sqlToJavaType;
     }
 
     public void setDataSource(DataSource dataSource) {
@@ -61,16 +68,17 @@ public class PojoGenerator
     {
         return String.format("select * from %s where 1=2",tableName);
     }
-    public PojoPrototype readTableMetadata(String tableName, String schema)
+    
+    public ClassInfo readTableMetadata(String tableName, String schema)
     {
-        logger.info("Table : " + tableName + " Java Class : " + nameConversionHelper.tableNameToClassName(tableName));
+        logger.info("Table : " + tableName + " Java Class : " + nameConversion.tableNameToClassName(tableName));
         final String sql = metadataQuerySQL(schema+"."+tableName);
         Statement statement = null;
         ResultSet rs = null;
         ResultSetMetaData metaData;
-        PojoPrototype pojoPrototype = new PojoPrototype();
+        ClassInfo pojoPrototype = new ClassInfo();
         pojoPrototype.setTableName(tableName);
-        pojoPrototype.setName(nameConversionHelper.tableNameToClassName(tableName));
+        pojoPrototype.setName(nameConversion.tableNameToClassName(tableName));
         String imp;
         try {
             statement = connection.createStatement();
@@ -78,19 +86,19 @@ public class PojoGenerator
             if(rs!=null){
                 metaData = rs.getMetaData();
                 if(metaData!=null){
-                    PojoFieldPrototype pojoFieldPrototype;
+                    FieldInfo pojoFieldPrototype;
                     for(int i=1;i<metaData.getColumnCount()+1;i++){
-                        pojoFieldPrototype = new PojoFieldPrototype();
+                        pojoFieldPrototype = new FieldInfo();
 
                         pojoFieldPrototype.setColumnName(metaData.getColumnName(i));
 //                        pojoFieldPrototype.setName(nameConversionHelper.columnNameToIdentifier(metaData.getColumnName(i)));
                         pojoFieldPrototype.setName(metaData.getColumnName(i));//fix me!!
                         pojoFieldPrototype.setSqlType(metaData.getColumnTypeName(i));
-                        pojoFieldPrototype.setJavaType(sqlTypesConversionHelper.sqlTypeToJavaType(metaData.getColumnTypeName(i)));
+                        pojoFieldPrototype.setJavaType(sqlToJavaType.getJavaType(metaData.getColumnTypeName(i)));
                         if(metaData.isAutoIncrement(i)){
                         	pojoFieldPrototype.setAnnotation("@PrimaryKey");
                         }
-                        imp = sqlTypesConversionHelper.importStringForSqlType(metaData.getColumnTypeName(i));
+                        imp = sqlToJavaType.getImportString(metaData.getColumnTypeName(i));
                         if(imp!=null && !pojoPrototype.getImports().contains(imp)){
                             pojoPrototype.getImports().add(imp);
                         }
@@ -132,6 +140,9 @@ public class PojoGenerator
         }
         return pojoPrototype;
     }
+    
+    
+    //for oracle database
     public List<String> getAllTablesInSchema(String shemaName)
     {
         final String tablesInSchemaSQL = "select table_name from all_tables where owner=\'"+shemaName+"\'";
@@ -157,6 +168,7 @@ public class PojoGenerator
         return tables;
     }
 
+    //for mysql database
     public List<String> getAllTablesInSchemaBySQL(String sql)
     {
         List<String> tables = null;
@@ -179,5 +191,44 @@ public class PojoGenerator
             logger.error(e);
         }
         return tables;
+    }
+    
+    public void genereateCode(String dbName, String templateName, String path, String javaPackage){
+    	
+    	List<String> tables = getAllTablesInSchemaBySQL("SHOW TABLES FROM "+dbName);
+        PojoWriter pojoWriter = new PojoWriter();
+        pojoWriter.setPath(path + PojoWriter.packageToDirPath(javaPackage));
+        pojoWriter.setTemplateName(templateName);
+
+        ClassInfo prototype;
+        for(String table : tables)
+        {
+            prototype = readTableMetadata(table,dbName);
+
+            prototype.setJavaPackage(javaPackage);
+            pojoWriter.setFileName(prototype.getName()+".java");
+            pojoWriter.write(prototype);
+            logger.debug("Prototype : "+prototype);
+        }
+    }
+    
+    
+    public static void main(String[] args)
+    {
+    	ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-oracle.xml");
+        CodeGenerator codeGenerator = (CodeGenerator) context.getBean("pojoGenerator");
+        
+        String dbName = "crmadmin";
+        String templateName ="crmPojo.vm";
+        
+        String path = "src/main/java/";
+        String javaPackage = "com.crm.dao.admin.model";
+       
+        codeGenerator.genereateCode(dbName, templateName, path, javaPackage);
+        
+        dbName = "client01";
+        javaPackage = "com.crm.dao.admin.client";
+        
+        codeGenerator.genereateCode(dbName, templateName, path, javaPackage);
     }
 }

@@ -1,9 +1,9 @@
-package com.blogspot.ostas.dbpojo.model;
+package com.gihub.dbpojo.model;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
-public class PojoFieldPrototype {
+public class FieldInfo {
 
     private String name;
     private String columnName;
@@ -76,7 +76,7 @@ public class PojoFieldPrototype {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PojoFieldPrototype that = (PojoFieldPrototype) o;
+        FieldInfo that = (FieldInfo) o;
 
         if (!columnName.equals(that.columnName)) return false;
         if (!javaType.equals(that.javaType)) return false;
