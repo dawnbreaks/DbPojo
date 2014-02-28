@@ -1,7 +1,7 @@
 DbPojo
 ========
 
-A simple reverse engineering tool for generating pojo from database tables.
+A simple reverse engineering tool for generating pojo from database.
 
 
 
