@@ -1,12 +1,16 @@
 package com.gihub.dbpojo;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,6 +18,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 
 import com.gihub.dbpojo.model.ClassInfo;
 import com.gihub.dbpojo.model.FieldInfo;
@@ -34,7 +39,15 @@ public class CodeGenerator
         this.nameConversion = nameConversion;
     }
 
-    public void setSqlToJavaType(SqlToJavaType sqlToJavaType) {
+    public Connection getConnection() {
+		return connection;
+	}
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
+	public void setSqlToJavaType(SqlToJavaType sqlToJavaType) {
         this.sqlToJavaType = sqlToJavaType;
     }
 
@@ -69,9 +82,22 @@ public class CodeGenerator
         return String.format("select * from %s where 1=2",tableName);
     }
     
-    public ClassInfo readTableMetadata(String tableName, String schema)
+    public ClassInfo readTableMetadata(String tableName, String schema) throws SQLException
     {
         logger.info("Table : " + tableName + " Java Class : " + nameConversion.tableNameToClassName(tableName));
+        
+        DatabaseMetaData meta = connection.getMetaData();
+
+        ResultSet pkResultset = meta.getPrimaryKeys(schema, schema, tableName);
+
+        Set<String> pkSet = new HashSet<String> ();
+        while (pkResultset.next()) {
+          String columnName = pkResultset.getString("COLUMN_NAME");
+          pkSet.add(columnName.toLowerCase());
+        }
+        pkResultset.close();
+      
+        
         final String sql = metadataQuerySQL(schema+"."+tableName);
         Statement statement = null;
         ResultSet rs = null;
@@ -96,8 +122,14 @@ public class CodeGenerator
                         pojoFieldPrototype.setSqlType(metaData.getColumnTypeName(i));
                         pojoFieldPrototype.setJavaType(sqlToJavaType.getJavaType(metaData.getColumnTypeName(i)));
                         if(metaData.isAutoIncrement(i)){
-                        	pojoFieldPrototype.setAnnotation("@PrimaryKey");
+                        	pojoFieldPrototype.addAnnotations("@AutoIncrement");
                         }
+                        
+                        if(pkSet.contains(metaData.getColumnName(i).toLowerCase())){
+                        	pojoFieldPrototype.addAnnotations("@PrimaryKey");
+                        }
+                        
+                        
                         imp = sqlToJavaType.getImportString(metaData.getColumnTypeName(i));
                         if(imp!=null && !pojoPrototype.getImports().contains(imp)){
                             pojoPrototype.getImports().add(imp);
@@ -193,7 +225,7 @@ public class CodeGenerator
         return tables;
     }
     
-    public void genereateCode(String dbName, String templateName, String path, String javaPackage){
+    public void genereateCode(String dbName, String templateName, String path, String javaPackage) throws SQLException{
     	
     	List<String> tables = getAllTablesInSchemaBySQL("SHOW TABLES FROM "+dbName);
         PojoWriter pojoWriter = new PojoWriter();
@@ -213,7 +245,7 @@ public class CodeGenerator
     }
     
     
-    public static void main(String[] args)
+    public static void main(String[] args) throws SQLException
     {
     	ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-oracle.xml");
         CodeGenerator codeGenerator = (CodeGenerator) context.getBean("pojoGenerator");
@@ -226,7 +258,10 @@ public class CodeGenerator
        
         codeGenerator.genereateCode(dbName, templateName, path, javaPackage);
         
-        dbName = "client01";
+        
+        
+        dbName = "client02";
+//        codeGenerator.getConnection().createStatement().execute("use "+dbName+";");
         javaPackage = "com.crm.dao.admin.client";
         
         codeGenerator.genereateCode(dbName, templateName, path, javaPackage);
